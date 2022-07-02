@@ -6,6 +6,15 @@ type User {
   email: String!
 }
 
+type Jwt {
+  jwt: String!
+}
+
 type Query {
   user(id: ID!): User
+  jwt(email: String!, password: String!): Jwt
+}
+
+type Mutation {
+  register(firstName: String!, secondName: String!, password: String!, email: String!): User
 }

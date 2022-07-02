@@ -80,8 +80,17 @@ export interface User {
     email: string;
 }
 
+export interface Jwt {
+    jwt: string;
+}
+
 export interface IQuery {
     user(id: string): Nullable<User> | Promise<Nullable<User>>;
+    jwt(email: string, password: string): Nullable<Jwt> | Promise<Nullable<Jwt>>;
+}
+
+export interface IMutation {
+    register(firstName: string, secondName: string, password: string, email: string): Nullable<User> | Promise<Nullable<User>>;
 }
 
 type Nullable<T> = T | null;
