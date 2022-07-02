@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "amd",
+    "moduleResolution": "node",
+    "lib": [
+      "esnext"
+    ],
+    "strict": true,
+    "rootDir": ".",
+    "outFile" : "dist/main.js",
+    "sourceMap": true,
+    "esModuleInterop": true
+  }
+}
