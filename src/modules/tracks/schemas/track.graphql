@@ -1,0 +1,9 @@
+type Track {
+  id: ID!
+  title: String!
+  albums: [Album]
+  bands: [Band]
+  duration: Int
+  released: Int
+  genres: [Genre]
+}

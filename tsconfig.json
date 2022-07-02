@@ -1,15 +1,23 @@
 {
+  "extends": "ts-node/node16/tsconfig.json",
+  "ts-node": {
+    "files": true,
+  },
   "compilerOptions": {
+    "experimentalDecorators": true,
     "target": "ES2022",
-    "module": "amd",
+    "module": "Node16",
     "moduleResolution": "node",
     "lib": [
       "esnext"
     ],
     "strict": true,
-    "rootDir": ".",
-    "outFile" : "dist/main.js",
+    "rootDir": "src",
+    "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true
-  }
+  },
+  "include": [
+    "src"
+  ],
 }
