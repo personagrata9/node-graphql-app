@@ -1,21 +1,13 @@
+import 'dotenv/config';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import 'dotenv/config';
 import { Jwt } from '../../../graphql';
-
-interface IUser {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-  email: string;
-  __v: number;
-}
+import { IUser } from '../models/user.model';
 
 @Injectable()
 export default class UsersService {
-  private usersUrl: string | undefined = process.env.USERS_URL;
+  private url: string | undefined = process.env.USERS_URL;
 
   private readonly httpService!: HttpService;
 
@@ -27,8 +19,8 @@ export default class UsersService {
 
   findOneById(id: string): Promise<AxiosResponse<IUser>> {
     return new Promise((resolve, reject) => {
-      if (this.usersUrl) {
-        const url = `${this.usersUrl}/${id}`;
+      if (this.url) {
+        const url = `${this.url}/${id}`;
         resolve(this.httpService.axiosRef.get(url));
       } else {
         reject(new Error(this.NoUrlErrorMessage));
@@ -38,8 +30,8 @@ export default class UsersService {
 
   getToken(email: string, password: string): Promise<AxiosResponse<Jwt>> {
     return new Promise((resolve, reject) => {
-      if (this.usersUrl) {
-        const url = `${this.usersUrl}/login`;
+      if (this.url) {
+        const url = `${this.url}/login`;
         const data = { email, password };
         resolve(this.httpService.axiosRef.post(url, data));
       } else {
@@ -50,8 +42,8 @@ export default class UsersService {
 
   register(data: Omit<IUser, '_id' | '__v'>): Promise<AxiosResponse<IUser>> {
     return new Promise((resolve, reject) => {
-      if (this.usersUrl) {
-        const url = `${this.usersUrl}/register`;
+      if (this.url) {
+        const url = `${this.url}/register`;
         resolve(this.httpService.axiosRef.post(url, data));
       } else {
         reject(new Error(this.NoUrlErrorMessage));

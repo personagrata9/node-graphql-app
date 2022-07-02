@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User, Jwt } from '../../../graphql';
+import { IUser } from '../models/user.model';
 import UsersService from '../services/users.service';
 
-@Resolver('User')
+@Resolver('Users')
 export default class UsersResolver {
   private readonly usersService!: UsersService;
 
@@ -11,13 +12,9 @@ export default class UsersResolver {
     this.usersService = new UsersService();
   }
 
-  @Query()
-  async user(@Args('id') id: string): Promise<User> {
-    const response = await this.usersService.findOneById(id);
-
-    const { _id, firstName, lastName, password, email } = response.data;
-
-    const user: User = {
+  private convertUser = (data: IUser): User => {
+    const { _id, firstName, lastName, password, email } = data;
+    const convertedUser = {
       id: _id,
       firstName,
       secondName: lastName,
@@ -25,13 +22,20 @@ export default class UsersResolver {
       email,
     };
 
+    return convertedUser;
+  };
+
+  @Query()
+  async user(@Args('id') id: string): Promise<User> {
+    const response = await this.usersService.findOneById(id);
+    const user: User = this.convertUser(response.data);
+
     return user;
   }
 
   @Query()
   async jwt(@Args('email') email: string, @Args('password') password: string): Promise<Jwt> {
     const response = await this.usersService.getToken(email, password);
-
     const jwt = response.data;
 
     return jwt;
@@ -53,15 +57,7 @@ export default class UsersResolver {
 
     const response = await this.usersService.register(userInput);
 
-    const { _id } = response.data;
-
-    const user: User = {
-      id: _id,
-      firstName,
-      secondName,
-      password,
-      email,
-    };
+    const user: User = this.convertUser(response.data);
 
     return user;
   }

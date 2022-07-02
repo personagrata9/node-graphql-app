@@ -4,7 +4,6 @@ import UsersResolver from './resolvers/users.resolver';
 import UsersService from './services/users.service';
 
 @Module({
-  // controllers: [CatsController],
   imports: [HttpModule],
   providers: [UsersService, UsersResolver],
 })
