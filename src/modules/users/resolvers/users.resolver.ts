@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User, Jwt } from '../../../graphql';
 import { IUser } from '../models/user.model';
 import UsersService from '../services/users.service';
 
-@Resolver('Users')
+@Resolver('User')
 export default class UsersResolver {
   private readonly usersService!: UsersService;
 
@@ -12,31 +11,16 @@ export default class UsersResolver {
     this.usersService = new UsersService();
   }
 
-  private convertUser = (data: IUser): User => {
-    const { _id, firstName, lastName, password, email } = data;
-    const convertedUser = {
-      id: _id,
-      firstName,
-      secondName: lastName,
-      password,
-      email,
-    };
-
-    return convertedUser;
-  };
-
   @Query()
   async user(@Args('id') id: string): Promise<User> {
-    const response = await this.usersService.findOneById(id);
-    const user: User = this.convertUser(response.data);
+    const user = await this.usersService.findOneById(id);
 
     return user;
   }
 
   @Query()
   async jwt(@Args('email') email: string, @Args('password') password: string): Promise<Jwt> {
-    const response = await this.usersService.getToken(email, password);
-    const jwt = response.data;
+    const jwt = await this.usersService.getToken(email, password);
 
     return jwt;
   }
@@ -48,16 +32,14 @@ export default class UsersResolver {
     @Args('password') password: string,
     @Args('email') email: string
   ): Promise<User> {
-    const userInput = {
+    const userInput: Omit<IUser, '_id'> = {
       firstName,
       lastName: secondName,
       password,
       email,
     };
 
-    const response = await this.usersService.register(userInput);
-
-    const user: User = this.convertUser(response.data);
+    const user = await this.usersService.register(userInput);
 
     return user;
   }

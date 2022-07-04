@@ -7,12 +7,28 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface Genre {
+export interface Album {
     id: string;
     name?: Nullable<string>;
-    description?: Nullable<string>;
-    country?: Nullable<string>;
-    year?: Nullable<number>;
+    released?: Nullable<number>;
+    artists?: Nullable<Nullable<Artist>[]>;
+    bands?: Nullable<Nullable<Band>[]>;
+    tracks?: Nullable<Nullable<Track>[]>;
+    genres?: Nullable<Nullable<Genre>[]>;
+    image?: Nullable<string>;
+}
+
+export interface IQuery {
+    album(id: string): Nullable<Album> | Promise<Nullable<Album>>;
+    albums(limit?: Nullable<number>, offset?: Nullable<number>): Nullable<Nullable<Album>[]> | Promise<Nullable<Nullable<Album>[]>>;
+    artist(id: string): Nullable<Artist> | Promise<Nullable<Artist>>;
+    artists(limit?: Nullable<number>, offset?: Nullable<number>): Nullable<Nullable<Artist>[]> | Promise<Nullable<Nullable<Artist>[]>>;
+    band(id: string): Nullable<Band> | Promise<Nullable<Band>>;
+    bands(limit?: Nullable<number>, offset?: Nullable<number>): Nullable<Nullable<Band>[]> | Promise<Nullable<Nullable<Band>[]>>;
+    genre(id: string): Nullable<Genre> | Promise<Nullable<Genre>>;
+    genres(limit?: Nullable<number>, offset?: Nullable<number>): Nullable<Nullable<Genre>[]> | Promise<Nullable<Nullable<Genre>[]>>;
+    user(id: string): Nullable<User> | Promise<Nullable<User>>;
+    jwt(email: string, password: string): Nullable<Jwt> | Promise<Nullable<Jwt>>;
 }
 
 export interface Artist {
@@ -37,6 +53,7 @@ export interface Band {
 }
 
 export interface Member {
+    id: string;
     artist?: Nullable<Nullable<Artist>[]>;
     instrument?: Nullable<string>;
     years?: Nullable<Nullable<string>[]>;
@@ -51,15 +68,12 @@ export interface Favourites {
     tracks?: Nullable<Nullable<Track>[]>;
 }
 
-export interface Album {
+export interface Genre {
     id: string;
     name?: Nullable<string>;
-    released?: Nullable<number>;
-    artists?: Nullable<Nullable<Artist>[]>;
-    bands?: Nullable<Nullable<Band>[]>;
-    tracks?: Nullable<Nullable<Track>[]>;
-    genres?: Nullable<Nullable<Genre>[]>;
-    image?: Nullable<string>;
+    description?: Nullable<string>;
+    country?: Nullable<string>;
+    year?: Nullable<number>;
 }
 
 export interface Track {
@@ -82,11 +96,6 @@ export interface User {
 
 export interface Jwt {
     jwt: string;
-}
-
-export interface IQuery {
-    user(id: string): Nullable<User> | Promise<Nullable<User>>;
-    jwt(email: string, password: string): Nullable<Jwt> | Promise<Nullable<Jwt>>;
 }
 
 export interface IMutation {

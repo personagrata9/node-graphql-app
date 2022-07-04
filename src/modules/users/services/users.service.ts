@@ -1,53 +1,55 @@
-import 'dotenv/config';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import { Jwt } from '../../../graphql';
+import { Jwt, User } from '../../../graphql';
 import { IUser } from '../models/user.model';
 
 @Injectable()
 export default class UsersService {
-  private url: string | undefined = process.env.USERS_URL;
+  private baseUrl = process.env.USERS_URL as string;
 
   private readonly httpService!: HttpService;
-
-  private NoUrlErrorMessage = 'Set up USER_URL in .env';
 
   constructor() {
     this.httpService = new HttpService();
   }
 
-  findOneById(id: string): Promise<AxiosResponse<IUser>> {
-    return new Promise((resolve, reject) => {
-      if (this.url) {
-        const url = `${this.url}/${id}`;
-        resolve(this.httpService.axiosRef.get(url));
-      } else {
-        reject(new Error(this.NoUrlErrorMessage));
-      }
-    });
-  }
+  private convertUser = (data: IUser): User => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { _id, firstName, lastName, password, email } = data;
+    const convertedUser: User = {
+      id: _id,
+      firstName,
+      secondName: lastName,
+      password,
+      email,
+    };
 
-  getToken(email: string, password: string): Promise<AxiosResponse<Jwt>> {
-    return new Promise((resolve, reject) => {
-      if (this.url) {
-        const url = `${this.url}/login`;
-        const data = { email, password };
-        resolve(this.httpService.axiosRef.post(url, data));
-      } else {
-        reject(new Error(this.NoUrlErrorMessage));
-      }
-    });
-  }
+    return convertedUser;
+  };
 
-  register(data: Omit<IUser, '_id' | '__v'>): Promise<AxiosResponse<IUser>> {
-    return new Promise((resolve, reject) => {
-      if (this.url) {
-        const url = `${this.url}/register`;
-        resolve(this.httpService.axiosRef.post(url, data));
-      } else {
-        reject(new Error(this.NoUrlErrorMessage));
-      }
-    });
-  }
+  findOneById = async (id: string): Promise<User> => {
+    const url = `${this.baseUrl}/${id}`;
+    const response: AxiosResponse<IUser> = await this.httpService.axiosRef.get(url);
+    const user = this.convertUser(response.data);
+
+    return user;
+  };
+
+  getToken = async (email: string, password: string): Promise<Jwt> => {
+    const url = `${this.baseUrl}/login`;
+    const data = { email, password };
+    const response: AxiosResponse<Jwt> = await this.httpService.axiosRef.post(url, data);
+    const jwt = response.data;
+
+    return jwt;
+  };
+
+  register = async (data: Omit<IUser, '_id'>): Promise<User> => {
+    const url = `${this.baseUrl}/register`;
+    const response: AxiosResponse<IUser> = await this.httpService.axiosRef.post(url, data);
+    const user = this.convertUser(response.data);
+
+    return user;
+  };
 }
