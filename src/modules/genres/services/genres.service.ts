@@ -29,12 +29,17 @@ export default class GenresService {
     return convertedGenre;
   };
 
-  findOneById = async (id: string): Promise<Genre> => {
-    const url = `${this.baseUrl}/${id}`;
-    const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.get(url);
-    const genre = this.convertGenre(response.data);
+  findOneById = async (id: string): Promise<Genre | null> => {
+    try {
+      const url = `${this.baseUrl}/${id}`;
+      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.get(url);
+      const genre = this.convertGenre(response.data);
+      // ?? error in service
 
-    return genre;
+      return genre.id ? genre : null;
+    } catch {
+      return null;
+    }
   };
 
   findAll = async (limit: number, offset: number): Promise<Genre[]> => {

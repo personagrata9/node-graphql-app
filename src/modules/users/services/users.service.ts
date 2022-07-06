@@ -28,12 +28,16 @@ export default class UsersService {
     return convertedUser;
   };
 
-  findOneById = async (id: string): Promise<User> => {
-    const url = `${this.baseUrl}/${id}`;
-    const response: AxiosResponse<IUser> = await this.httpService.axiosRef.get(url);
-    const user = this.convertUser(response.data);
+  findOneById = async (id: string): Promise<User | null> => {
+    try {
+      const url = `${this.baseUrl}/${id}`;
+      const response: AxiosResponse<IUser> = await this.httpService.axiosRef.get(url);
+      const user = this.convertUser(response.data);
 
-    return user;
+      return user;
+    } catch {
+      return null;
+    }
   };
 
   getToken = async (email: string, password: string): Promise<Jwt> => {

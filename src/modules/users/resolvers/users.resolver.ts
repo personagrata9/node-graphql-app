@@ -12,7 +12,7 @@ export default class UsersResolver {
   }
 
   @Query()
-  async user(@Args('id') id: string): Promise<User> {
+  async user(@Args('id') id: string): Promise<User | null> {
     const user = await this.usersService.findOneById(id);
 
     return user;

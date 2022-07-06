@@ -31,12 +31,16 @@ export default class BandsService {
     return convertedBand;
   };
 
-  findOneById = async (id: string): Promise<Band> => {
-    const url = `${this.baseUrl}/${id}`;
-    const response: AxiosResponse<IBand> = await this.httpService.axiosRef.get(url);
-    const band = this.convertBand(response.data);
+  findOneById = async (id: string): Promise<Band | null> => {
+    try {
+      const url = `${this.baseUrl}/${id}`;
+      const response: AxiosResponse<IBand> = await this.httpService.axiosRef.get(url);
+      const band = this.convertBand(response.data);
 
-    return band;
+      return band;
+    } catch {
+      return null;
+    }
   };
 
   findAll = async (limit: number, offset: number): Promise<Band[]> => {

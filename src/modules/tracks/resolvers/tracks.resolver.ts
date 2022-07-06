@@ -1,48 +1,57 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { Album } from '../../../graphql';
+import { Album, Track } from '../../../graphql';
+import AlbumsService from '../../albums/services/albums.service';
 import ArtistsService from '../../artists/services/artists.service';
 import BandsService from '../../bands/services/bands.service';
 import GenresService from '../../genres/services/genres.service';
-import TracksService from '../../tracks/services/tracks.service';
-import AlbumsService from '../services/albums.service';
+import TracksService from '../services/tracks.service';
 
-@Resolver('Album')
-export default class AlbumsResolver {
+@Resolver('Track')
+export default class TracksResolver {
+  private readonly tracksService!: TracksService;
+
   private readonly albumsService!: AlbumsService;
 
   private readonly artistsService!: ArtistsService;
 
   private readonly bandsService!: BandsService;
 
-  private readonly tracksService!: TracksService;
-
   private readonly genresService!: GenresService;
 
   constructor() {
+    this.tracksService = new TracksService();
     this.albumsService = new AlbumsService();
     this.artistsService = new ArtistsService();
     this.bandsService = new BandsService();
-    this.tracksService = new TracksService();
     this.genresService = new GenresService();
   }
 
   @Query()
-  async album(@Args('id') id: string): Promise<Album | null> {
-    const album = await this.albumsService.findOneById(id);
+  async track(@Args('id') id: string): Promise<Track | null> {
+    const album = await this.tracksService.findOneById(id);
 
     return album;
   }
 
   @Query()
-  async albums(@Args('limit') limit: number, @Args('offset') offset: number): Promise<Album[]> {
-    const albums = await this.albumsService.findAll(limit, offset);
+  async tracks(@Args('limit') limit: number, @Args('offset') offset: number): Promise<Track[]> {
+    const albums = await this.tracksService.findAll(limit, offset);
 
     return albums;
   }
 
   @ResolveField()
-  async artists(@Parent() album: Album) {
-    const { artists } = album;
+  async album(@Parent() track: Track) {
+    const { album } = track;
+    const { id } = album as Album;
+    const result = await this.albumsService.findOneById(id);
+
+    return result;
+  }
+
+  @ResolveField()
+  async artists(@Parent() track: Track) {
+    const { artists } = track;
     const promises = artists?.length
       ? artists.map((artist) => (artist ? this.artistsService.findOneById(artist.id) : null))
       : [];
@@ -52,8 +61,8 @@ export default class AlbumsResolver {
   }
 
   @ResolveField()
-  async bands(@Parent() album: Album) {
-    const { bands } = album;
+  async bands(@Parent() track: Track) {
+    const { bands } = track;
     const promises = bands?.length ? bands.map((band) => (band ? this.bandsService.findOneById(band.id) : null)) : [];
     const result = (await Promise.all(promises)).filter((band) => band);
 
@@ -61,19 +70,8 @@ export default class AlbumsResolver {
   }
 
   @ResolveField()
-  async tracks(@Parent() album: Album) {
-    const { tracks } = album;
-    const promises = tracks?.length
-      ? tracks.map((track) => (track ? this.tracksService.findOneById(track.id) : null))
-      : [];
-    const result = await Promise.all(promises);
-
-    return result;
-  }
-
-  @ResolveField()
-  async genres(@Parent() album: Album) {
-    const { genres } = album;
+  async genres(@Parent() track: Track) {
+    const { genres } = track;
     const promises = genres?.length
       ? genres.map((genre) => (genre ? this.genresService.findOneById(genre.id) : null))
       : [];

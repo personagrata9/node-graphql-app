@@ -11,7 +11,7 @@ export default class GenresResolver {
   }
 
   @Query()
-  async genre(@Args('id') id: string): Promise<Genre> {
+  async genre(@Args('id') id: string): Promise<Genre | null> {
     const genre = await this.genresService.findOneById(id);
 
     return genre;

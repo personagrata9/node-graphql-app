@@ -33,12 +33,16 @@ export default class AlbumsService {
     return convertedArtist;
   };
 
-  findOneById = async (id: string): Promise<Album> => {
-    const url = `${this.baseUrl}/${id}`;
-    const response: AxiosResponse<IAlbum> = await this.httpService.axiosRef.get(url);
-    const album = this.convertAlbum(response.data);
+  findOneById = async (id: string): Promise<Album | null> => {
+    try {
+      const url = `${this.baseUrl}/${id}`;
+      const response: AxiosResponse<IAlbum> = await this.httpService.axiosRef.get(url);
+      const album = this.convertAlbum(response.data);
 
-    return album;
+      return album;
+    } catch {
+      return null;
+    }
   };
 
   findAll = async (limit: number, offset: number): Promise<Album[]> => {

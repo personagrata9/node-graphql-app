@@ -28,18 +28,22 @@ export default class ArtistsService {
       birthPlace,
       country,
       bands: bandsIds.map((id) => ({ id })),
-      instruments: instruments.join(''),
+      instruments,
     };
 
     return convertedArtist;
   };
 
-  findOneById = async (id: string): Promise<Artist> => {
-    const url = `${this.baseUrl}/${id}`;
-    const response: AxiosResponse<IArtist> = await this.httpService.axiosRef.get(url);
-    const artist = this.convertArtist(response.data);
+  findOneById = async (id: string): Promise<Artist | null> => {
+    try {
+      const url = `${this.baseUrl}/${id}`;
+      const response: AxiosResponse<IArtist> = await this.httpService.axiosRef.get(url);
+      const artist = this.convertArtist(response.data);
 
-    return artist;
+      return artist;
+    } catch {
+      return null;
+    }
   };
 
   findAll = async (limit: number, offset: number): Promise<Artist[]> => {
