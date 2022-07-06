@@ -32,7 +32,7 @@ export default class ArtistsResolver {
   async bands(@Parent() artist: Artist) {
     const { bands } = artist;
     const promises = bands?.length ? bands.map((band) => (band ? this.bandsService.findOneById(band.id) : null)) : [];
-    const result = await Promise.all(promises);
+    const result = (await Promise.all(promises)).filter((band) => band?.id);
 
     return result;
   }

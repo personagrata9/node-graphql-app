@@ -45,7 +45,7 @@ export default class AlbumsResolver {
     const promises = artists?.length
       ? artists.map((artist) => (artist ? this.artistsService.findOneById(artist.id) : null))
       : [];
-    const result = await Promise.all(promises);
+    const result = (await Promise.all(promises)).filter((artist) => artist?.id);
 
     return result;
   }
@@ -54,7 +54,7 @@ export default class AlbumsResolver {
   async bands(@Parent() album: Album) {
     const { bands } = album;
     const promises = bands?.length ? bands.map((band) => (band ? this.bandsService.findOneById(band.id) : null)) : [];
-    const result = await Promise.all(promises);
+    const result = (await Promise.all(promises)).filter((band) => band?.id);
 
     return result;
   }
@@ -65,7 +65,7 @@ export default class AlbumsResolver {
   //   const promises = tracks?.length
   //     ? tracks.map((track) => (track ? this.tracksService.findOneById(track.id) : null))
   //     : [];
-  //   const result = await Promise.all(promises);
+  //   const result = (await Promise.all(promises)).filter((track) => track?.id);;
 
   //   return result;
   // }
@@ -76,7 +76,7 @@ export default class AlbumsResolver {
     const promises = genres?.length
       ? genres.map((genre) => (genre ? this.genresService.findOneById(genre.id) : null))
       : [];
-    const result = await Promise.all(promises);
+    const result = (await Promise.all(promises)).filter((genre) => genre?.id);
 
     return result;
   }

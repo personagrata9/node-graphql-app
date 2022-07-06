@@ -34,7 +34,7 @@ export default class BandsResolver {
     const promises = genres?.length
       ? genres.map((genre) => (genre ? this.genreService.findOneById(genre.id) : null))
       : [];
-    const result = await Promise.all(promises);
+    const result = (await Promise.all(promises)).filter((genre) => genre?.id);
 
     return result;
   }
