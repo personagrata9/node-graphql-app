@@ -29,13 +29,16 @@ export default class GenresService {
     return convertedGenre;
   };
 
-  private checkGenreExistance = async (id: string): Promise<void> => {
+  private checkOneGenreExistance = async (id: string): Promise<void> => {
     const genre = await this.findOneById(id);
 
     if (!genre) {
       throw new Error(`Genre with id ${id} not found`);
     }
   };
+
+  checkAllGenresExistance = async (genresIds: string[]) =>
+    Promise.all(genresIds?.map((id) => this.checkOneGenreExistance(id)));
 
   findOneById = async (id: string): Promise<Genre | null> => {
     try {
@@ -82,7 +85,7 @@ export default class GenresService {
         Authorization: `Bearer ${jwt}`,
       };
 
-      // await this.checkGenreExistance(id);
+      await this.checkOneGenreExistance(id);
 
       await this.httpService.axiosRef.delete(url, {
         headers: headersRequest,
@@ -96,7 +99,7 @@ export default class GenresService {
 
   updateGenre = async (jwt: string, id: string, input: GenreUpdateInput): Promise<Genre | Error> => {
     try {
-      await this.checkGenreExistance(id);
+      await this.checkOneGenreExistance(id);
 
       const url = `${this.baseUrl}/${id}`;
       const headersRequest: AxiosRequestHeaders = {

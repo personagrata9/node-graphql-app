@@ -1,6 +1,7 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { Band } from '../../../graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Band, BandInput, BandUpdateInput } from '../../../graphql';
 import ArtistsService from '../../artists/services/artists.service';
+import { IContext } from '../../context.model';
 import GenresService from '../../genres/services/genres.service';
 import BandsService from '../services/bands.service';
 
@@ -63,5 +64,34 @@ export default class BandsResolver {
       .filter((member) => member);
 
     return result;
+  }
+
+  @Mutation()
+  async createBand(@Context() context: IContext, @Args('input') input: BandInput): Promise<Band | Error> {
+    const { jwt } = context.req.headers;
+    const genre = await this.bandsService.createBand(jwt as string, input);
+
+    return genre;
+  }
+
+  @Mutation()
+  async deleteBand(@Context() context: IContext, @Args('id') id: string): Promise<string | Error> {
+    const { jwt } = context.req.headers;
+
+    const message = await this.bandsService.deleteBand(jwt as string, id);
+
+    return message;
+  }
+
+  @Mutation()
+  async updateBand(
+    @Context() context: IContext,
+    @Args('id') id: string,
+    @Args('input') input: BandUpdateInput
+  ): Promise<Band | Error> {
+    const { jwt } = context.req.headers;
+    const band = await this.bandsService.updateBand(jwt as string, id, input);
+
+    return band;
   }
 }

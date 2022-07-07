@@ -13,10 +13,38 @@ type Member {
   secondName: String
   middleName: String
   instrument: String
-  years: [String]
+  years: [Int]
+}
+
+input MemberInput {
+  id: ID!
+  instrument: String
+  years: [Int]
+}
+
+input BandInput {
+  name: String!
+  origin: String
+  members: [MemberInput]
+  website: String
+  genresIds: [ID]
+}
+
+input BandUpdateInput {
+  name: String
+  origin: String
+  members: [MemberInput]
+  website: String
+  genresIds: [ID]
 }
 
 type Query {
   band(id: ID!): Band
   bands(limit: Int, offset: Int): [Band]
+}
+
+type Mutation {
+  createBand(input: BandInput): Band
+  deleteBand(id: ID!): String
+  updateBand(id: ID!, input: BandUpdateInput): Band
 }

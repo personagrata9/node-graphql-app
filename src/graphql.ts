@@ -7,6 +7,28 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface MemberInput {
+    id: string;
+    instrument?: Nullable<string>;
+    years?: Nullable<Nullable<number>[]>;
+}
+
+export interface BandInput {
+    name: string;
+    origin?: Nullable<string>;
+    members?: Nullable<Nullable<MemberInput>[]>;
+    website?: Nullable<string>;
+    genresIds?: Nullable<Nullable<string>[]>;
+}
+
+export interface BandUpdateInput {
+    name?: Nullable<string>;
+    origin?: Nullable<string>;
+    members?: Nullable<Nullable<MemberInput>[]>;
+    website?: Nullable<string>;
+    genresIds?: Nullable<Nullable<string>[]>;
+}
+
 export interface GenreInput {
     name: string;
     description?: Nullable<string>;
@@ -81,7 +103,17 @@ export interface Member {
     secondName?: Nullable<string>;
     middleName?: Nullable<string>;
     instrument?: Nullable<string>;
-    years?: Nullable<Nullable<string>[]>;
+    years?: Nullable<Nullable<number>[]>;
+}
+
+export interface IMutation {
+    createBand(input?: Nullable<BandInput>): Nullable<Band> | Promise<Nullable<Band>>;
+    deleteBand(id: string): Nullable<string> | Promise<Nullable<string>>;
+    updateBand(id: string, input?: Nullable<BandUpdateInput>): Nullable<Band> | Promise<Nullable<Band>>;
+    createGenre(input?: Nullable<GenreInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
+    updateGenre(id: string, input?: Nullable<GenreUpdateInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    register(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export interface Favourites {
@@ -99,13 +131,6 @@ export interface Genre {
     description?: Nullable<string>;
     country?: Nullable<string>;
     year?: Nullable<number>;
-}
-
-export interface IMutation {
-    createGenre(input?: Nullable<GenreInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
-    deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
-    updateGenre(id: string, input?: Nullable<GenreUpdateInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
-    register(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export interface Track {

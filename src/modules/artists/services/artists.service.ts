@@ -34,6 +34,17 @@ export default class ArtistsService {
     return convertedArtist;
   };
 
+  private checkOneArtistExistance = async (id: string): Promise<void> => {
+    const artist = await this.findOneById(id);
+
+    if (!artist) {
+      throw new Error(`Artist with id ${id} not found`);
+    }
+  };
+
+  checkArtistsExistance = async (artistsIds: string[]) =>
+    Promise.all(artistsIds?.map((id) => this.checkOneArtistExistance(id)));
+
   findOneById = async (id: string): Promise<Artist | null> => {
     try {
       const url = `${this.baseUrl}/${id}`;

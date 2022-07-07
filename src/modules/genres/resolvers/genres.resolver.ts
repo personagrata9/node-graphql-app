@@ -37,9 +37,9 @@ export default class GenresResolver {
   async deleteGenre(@Context() context: IContext, @Args('id') id: string): Promise<string | Error> {
     const { jwt } = context.req.headers;
 
-    const genre = await this.genresService.deleteGenre(jwt as string, id);
+    const message = await this.genresService.deleteGenre(jwt as string, id);
 
-    return genre;
+    return message;
   }
 
   @Mutation()
