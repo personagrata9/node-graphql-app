@@ -1,7 +1,6 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Genre } from '../../../graphql';
+import { Genre, GenreInput } from '../../../graphql';
 import { IContext } from '../../context.model';
-import { IGenre } from '../models/genre.model';
 import GenresService from '../services/genres.service';
 
 @Resolver('Genre')
@@ -27,22 +26,9 @@ export default class GenresResolver {
   }
 
   @Mutation()
-  async createGenre(
-    @Context() context: IContext,
-    @Args('name') name: string,
-    @Args('description') description: string,
-    @Args('country') country: string,
-    @Args('year') year: number
-  ): Promise<Genre | Error> {
+  async createGenre(@Context() context: IContext, @Args('input') input: GenreInput): Promise<Genre | Error> {
     const { jwt } = context.req.headers;
-    const genreInput: Omit<IGenre, '_id'> = {
-      name,
-      description,
-      country,
-      year,
-    };
-
-    const genre = await this.genresService.createGenre(jwt as string, genreInput);
+    const genre = await this.genresService.createGenre(jwt as string, input);
 
     return genre;
   }
@@ -60,20 +46,10 @@ export default class GenresResolver {
   async updateGenre(
     @Context() context: IContext,
     @Args('id') id: string,
-    @Args('name') name: string,
-    @Args('description') description: string,
-    @Args('country') country: string,
-    @Args('year') year: number
+    @Args('input') input: GenreInput
   ): Promise<Genre | Error> {
     const { jwt } = context.req.headers;
-    const genreInput: Omit<IGenre, '_id'> = {
-      name,
-      description,
-      country,
-      year,
-    };
-
-    const genre = await this.genresService.updateGenre(jwt as string, id, genreInput);
+    const genre = await this.genresService.updateGenre(jwt as string, id, input);
 
     return genre;
   }

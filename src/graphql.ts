@@ -7,6 +7,20 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface GenreInput {
+    name: string;
+    description?: Nullable<string>;
+    country?: Nullable<string>;
+    year?: Nullable<number>;
+}
+
+export interface UserInput {
+    firstName: string;
+    secondName: string;
+    password: string;
+    email: string;
+}
+
 export interface Album {
     id: string;
     name?: Nullable<string>;
@@ -81,10 +95,10 @@ export interface Genre {
 }
 
 export interface IMutation {
-    createGenre(name: string, description?: Nullable<string>, country?: Nullable<string>, year?: Nullable<number>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    createGenre(input?: Nullable<GenreInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
     deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
     updateGenre(id: string, name?: Nullable<string>, description?: Nullable<string>, country?: Nullable<string>, year?: Nullable<number>): Nullable<Genre> | Promise<Nullable<Genre>>;
-    register(firstName: string, secondName: string, password: string, email: string): Nullable<User> | Promise<Nullable<User>>;
+    register(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export interface Track {

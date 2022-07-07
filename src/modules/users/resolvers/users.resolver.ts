@@ -1,6 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { User, Jwt } from '../../../graphql';
-import { IUser } from '../models/user.model';
+import { User, Jwt, UserInput } from '../../../graphql';
 import UsersService from '../services/users.service';
 
 @Resolver('User')
@@ -19,27 +18,15 @@ export default class UsersResolver {
   }
 
   @Query()
-  async jwt(@Args('email') email: string, @Args('password') password: string): Promise<Jwt> {
+  async jwt(@Args('email') email: string, @Args('password') password: string): Promise<Jwt | Error> {
     const jwt = await this.usersService.getToken(email, password);
 
     return jwt;
   }
 
   @Mutation()
-  async register(
-    @Args('firstName') firstName: string,
-    @Args('secondName') secondName: string,
-    @Args('password') password: string,
-    @Args('email') email: string
-  ): Promise<User> {
-    const userInput: Omit<IUser, '_id'> = {
-      firstName,
-      lastName: secondName,
-      password,
-      email,
-    };
-
-    const user = await this.usersService.register(userInput);
+  async register(@Args('input') input: UserInput): Promise<User | Error> {
+    const user = await this.usersService.register(input);
 
     return user;
   }

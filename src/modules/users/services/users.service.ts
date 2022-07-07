@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
-import { Jwt, User } from '../../../graphql';
+import { Jwt, User, UserInput } from '../../../graphql';
 import { IUser } from '../models/user.model';
 
 @Injectable()
@@ -40,20 +40,36 @@ export default class UsersService {
     }
   };
 
-  getToken = async (email: string, password: string): Promise<Jwt> => {
-    const url = `${this.baseUrl}/login`;
-    const data = { email, password };
-    const response: AxiosResponse<Jwt> = await this.httpService.axiosRef.post(url, data);
-    const jwt = response.data;
+  getToken = async (email: string, password: string): Promise<Jwt | Error> => {
+    try {
+      const url = `${this.baseUrl}/login`;
+      const data = { email, password };
+      const response: AxiosResponse<Jwt> = await this.httpService.axiosRef.post(url, data);
+      const jwt = response.data;
+      // ?? validation in service
 
-    return jwt;
+      return jwt || new Error('Invalid input data');
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   };
 
-  register = async (data: Omit<IUser, '_id'>): Promise<User> => {
-    const url = `${this.baseUrl}/register`;
-    const response: AxiosResponse<IUser> = await this.httpService.axiosRef.post(url, data);
-    const user = this.convertUser(response.data);
+  register = async (input: UserInput): Promise<User | Error> => {
+    try {
+      const url = `${this.baseUrl}/register`;
+      const { firstName, secondName, password, email } = input;
+      const data: Omit<IUser, '_id'> = {
+        firstName,
+        lastName: secondName,
+        password,
+        email,
+      };
+      const response: AxiosResponse<IUser> = await this.httpService.axiosRef.post(url, data);
+      const user = this.convertUser(response.data);
 
-    return user;
+      return user;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   };
 }

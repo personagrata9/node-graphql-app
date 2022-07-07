@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { IGenre } from '../models/genre.model';
 import { IGenresPaginated } from '../models/genresPaginated.model';
-import { Genre } from '../../../graphql';
+import { Genre, GenreInput } from '../../../graphql';
 
 @Injectable()
 export default class GenresService {
@@ -58,12 +58,12 @@ export default class GenresService {
     return genres;
   };
 
-  createGenre = async (jwt: string, data: Omit<IGenre, '_id'>): Promise<Genre | Error> => {
+  createGenre = async (jwt: string, input: GenreInput): Promise<Genre | Error> => {
     try {
       const headersRequest: AxiosRequestHeaders = {
         Authorization: `Bearer ${jwt}`,
       };
-      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.post(this.baseUrl, data, {
+      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.post(this.baseUrl, input, {
         headers: headersRequest,
       });
 
@@ -94,7 +94,7 @@ export default class GenresService {
     }
   };
 
-  updateGenre = async (jwt: string, id: string, data: Omit<IGenre, '_id'>): Promise<Genre | Error> => {
+  updateGenre = async (jwt: string, id: string, input: GenreInput): Promise<Genre | Error> => {
     try {
       await this.checkGenreExistance(id);
 
@@ -102,7 +102,7 @@ export default class GenresService {
       const headersRequest: AxiosRequestHeaders = {
         Authorization: `Bearer ${jwt}`,
       };
-      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.put(url, data, {
+      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.put(url, input, {
         headers: headersRequest,
       });
 
