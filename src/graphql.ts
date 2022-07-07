@@ -80,6 +80,13 @@ export interface Genre {
     year?: Nullable<number>;
 }
 
+export interface IMutation {
+    createGenre(name: string, description?: Nullable<string>, country?: Nullable<string>, year?: Nullable<number>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
+    updateGenre(id: string, name?: Nullable<string>, description?: Nullable<string>, country?: Nullable<string>, year?: Nullable<number>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    register(firstName: string, secondName: string, password: string, email: string): Nullable<User> | Promise<Nullable<User>>;
+}
+
 export interface Track {
     id: string;
     title: string;
@@ -101,10 +108,6 @@ export interface User {
 
 export interface Jwt {
     jwt: string;
-}
-
-export interface IMutation {
-    register(firstName: string, secondName: string, password: string, email: string): Nullable<User> | Promise<Nullable<User>>;
 }
 
 type Nullable<T> = T | null;
