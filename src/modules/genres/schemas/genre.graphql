@@ -13,6 +13,13 @@ input GenreInput {
   year: Int
 }
 
+input GenreUpdateInput {
+  name: String
+  description: String
+  country: String
+  year: Int
+}
+
 type Query {
   genre(id: ID!): Genre
   genres(limit: Int, offset: Int): [Genre]
@@ -21,5 +28,5 @@ type Query {
 type Mutation {
   createGenre(input: GenreInput): Genre
   deleteGenre(id: ID!): String
-  updateGenre(id: ID!, name: String, description: String, country: String, year: Int): Genre
+  updateGenre(id: ID!, input: GenreUpdateInput): Genre
 }

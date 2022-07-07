@@ -1,5 +1,5 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Genre, GenreInput } from '../../../graphql';
+import { Genre, GenreInput, GenreUpdateInput } from '../../../graphql';
 import { IContext } from '../../context.model';
 import GenresService from '../services/genres.service';
 
@@ -46,7 +46,7 @@ export default class GenresResolver {
   async updateGenre(
     @Context() context: IContext,
     @Args('id') id: string,
-    @Args('input') input: GenreInput
+    @Args('input') input: GenreUpdateInput
   ): Promise<Genre | Error> {
     const { jwt } = context.req.headers;
     const genre = await this.genresService.updateGenre(jwt as string, id, input);

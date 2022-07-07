@@ -14,6 +14,13 @@ export interface GenreInput {
     year?: Nullable<number>;
 }
 
+export interface GenreUpdateInput {
+    name?: Nullable<string>;
+    description?: Nullable<string>;
+    country?: Nullable<string>;
+    year?: Nullable<number>;
+}
+
 export interface UserInput {
     firstName: string;
     secondName: string;
@@ -97,7 +104,7 @@ export interface Genre {
 export interface IMutation {
     createGenre(input?: Nullable<GenreInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
     deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
-    updateGenre(id: string, name?: Nullable<string>, description?: Nullable<string>, country?: Nullable<string>, year?: Nullable<number>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    updateGenre(id: string, input?: Nullable<GenreUpdateInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
     register(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 

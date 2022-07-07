@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { IGenre } from '../models/genre.model';
 import { IGenresPaginated } from '../models/genresPaginated.model';
-import { Genre, GenreInput } from '../../../graphql';
+import { Genre, GenreInput, GenreUpdateInput } from '../../../graphql';
 
 @Injectable()
 export default class GenresService {
@@ -82,7 +82,7 @@ export default class GenresService {
         Authorization: `Bearer ${jwt}`,
       };
 
-      await this.checkGenreExistance(id);
+      // await this.checkGenreExistance(id);
 
       await this.httpService.axiosRef.delete(url, {
         headers: headersRequest,
@@ -94,7 +94,7 @@ export default class GenresService {
     }
   };
 
-  updateGenre = async (jwt: string, id: string, input: GenreInput): Promise<Genre | Error> => {
+  updateGenre = async (jwt: string, id: string, input: GenreUpdateInput): Promise<Genre | Error> => {
     try {
       await this.checkGenreExistance(id);
 
