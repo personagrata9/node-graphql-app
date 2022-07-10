@@ -100,8 +100,8 @@ export default class GenresService {
       headers,
     });
 
-    const genreUpdated = this.convertGenre(response.data);
+    const genre = this.convertGenre(response.data);
 
-    return genreUpdated;
+    return genre;
   };
 }

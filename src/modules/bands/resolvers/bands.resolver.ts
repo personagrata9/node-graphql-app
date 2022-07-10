@@ -19,17 +19,6 @@ export default class BandsResolver {
     this.artistsService = new ArtistsService();
   }
 
-  private checkInput = async (input: BandInput | BandUpdateInput): Promise<void> => {
-    const { members, genresIds } = input;
-    if (members?.length) {
-      const artistsIds: string[] = members.map((member) => member?.id as string);
-      await this.artistsService.checkArtistsExistance(artistsIds);
-    }
-    if (genresIds?.length) {
-      await this.genresService.checkAllGenresExistance(genresIds as string[]);
-    }
-  };
-
   @Query()
   async band(@Args('id') id: string): Promise<Band | null> {
     const band = await this.bandsService.findOneById(id);
@@ -76,6 +65,19 @@ export default class BandsResolver {
 
     return result;
   }
+
+  private checkInput = async (input: BandInput | BandUpdateInput): Promise<void> => {
+    const { members, genresIds } = input;
+
+    if (members?.length) {
+      const artistsIds: string[] = members.map((member) => member?.id as string);
+      await this.artistsService.checkAllArtistsExistance(artistsIds);
+    }
+
+    if (genresIds?.length) {
+      await this.genresService.checkAllGenresExistance(genresIds as string[]);
+    }
+  };
 
   @Mutation()
   async createBand(@Context() context: IContext, @Args('input') input: BandInput): Promise<Band | Error> {

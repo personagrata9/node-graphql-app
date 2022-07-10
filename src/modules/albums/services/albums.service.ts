@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AxiosResponse } from 'axios';
+import { AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { IAlbum } from '../models/album.model';
-import { Album } from '../../../graphql';
+import { Album, AlbumInput, AlbumUpdateInput } from '../../../graphql';
 import { IAlbumsPaginated } from '../models/albumsPaginated.model';
 
 @Injectable()
@@ -33,6 +33,14 @@ export default class AlbumsService {
     return convertedArtist;
   };
 
+  checkOneAlbumExistance = async (id: string): Promise<void> => {
+    const album = await this.findOneById(id);
+
+    if (!album) {
+      throw new Error(`Album with id ${id} not found`);
+    }
+  };
+
   findOneById = async (id: string): Promise<Album | null> => {
     try {
       const url = `${this.baseUrl}/${id}`;
@@ -51,5 +59,48 @@ export default class AlbumsService {
     const albums = response.data.items.map(this.convertAlbum);
 
     return albums;
+  };
+
+  createAlbum = async (jwt: string, input: AlbumInput): Promise<Album> => {
+    const headers: AxiosRequestHeaders = {
+      Authorization: `Bearer ${jwt}`,
+    };
+
+    const response: AxiosResponse<IAlbum> = await this.httpService.axiosRef.post(this.baseUrl, input, {
+      headers,
+    });
+
+    const album = this.convertAlbum(response.data);
+
+    return album;
+  };
+
+  deleteAlbum = async (jwt: string, id: string): Promise<string> => {
+    const url = `${this.baseUrl}/${id}`;
+    const headers: AxiosRequestHeaders = {
+      Authorization: `Bearer ${jwt}`,
+    };
+
+    await this.checkOneAlbumExistance(id);
+
+    await this.httpService.axiosRef.delete(url, {
+      headers,
+    });
+
+    return `Album with id ${id} was successfuly deleted`;
+  };
+
+  updateAlbum = async (jwt: string, id: string, input: AlbumUpdateInput): Promise<Album> => {
+    const url = `${this.baseUrl}/${id}`;
+    const headers: AxiosRequestHeaders = {
+      Authorization: `Bearer ${jwt}`,
+    };
+    const response: AxiosResponse<IAlbum> = await this.httpService.axiosRef.put(url, input, {
+      headers,
+    });
+
+    const album = this.convertAlbum(response.data);
+
+    return album;
   };
 }

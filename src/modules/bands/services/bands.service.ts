@@ -102,8 +102,8 @@ export default class BandsService {
       headers,
     });
 
-    const bandUpdated = this.convertBand(response.data);
+    const band = this.convertBand(response.data);
 
-    return bandUpdated;
+    return band;
   };
 }

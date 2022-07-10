@@ -4,7 +4,6 @@ import { AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { IArtist } from '../models/artist.model';
 import { Artist, ArtistInput, ArtistUpdateInput } from '../../../graphql';
 import { IArtistsPaginated } from '../models/artistsPaginated.model';
-import BandsService from '../../bands/services/bands.service';
 
 @Injectable()
 export default class ArtistsService {
@@ -12,11 +11,8 @@ export default class ArtistsService {
 
   private readonly httpService!: HttpService;
 
-  private readonly bandsService!: BandsService;
-
   constructor() {
     this.httpService = new HttpService();
-    this.bandsService = new BandsService();
   }
 
   private convertArtist = (data: IArtist): Artist => {
@@ -46,7 +42,7 @@ export default class ArtistsService {
     }
   };
 
-  checkArtistsExistance = async (artistsIds: string[]) =>
+  checkAllArtistsExistance = async (artistsIds: string[]) =>
     Promise.all(artistsIds?.map((id) => this.checkOneArtistExistance(id)));
 
   findOneById = async (id: string): Promise<Artist | null> => {
@@ -80,23 +76,6 @@ export default class ArtistsService {
     return formattedDate;
   };
 
-  private updateBandsMembers = async (jwt: string, artistId: string, input: ArtistInput | ArtistUpdateInput) => {
-    const bandsIds = input.bandsIds || [];
-
-    await Promise.all(
-      bandsIds.map(async (bandId) => {
-        const band = await this.bandsService.findOneById(bandId as string);
-
-        if (band) {
-          const existedMembers = band?.members || [];
-          const updatedMembers = [...existedMembers, { id: artistId }];
-          return this.bandsService.updateBand(jwt, band.id, { members: updatedMembers });
-        }
-        return undefined;
-      })
-    );
-  };
-
   createArtist = async (jwt: string, input: ArtistInput): Promise<Artist> => {
     const data = {
       ...input,
@@ -111,7 +90,6 @@ export default class ArtistsService {
     });
 
     const artist = this.convertArtist(response.data);
-    await this.updateBandsMembers(jwt, artist.id, input);
 
     return artist;
   };
@@ -146,8 +124,8 @@ export default class ArtistsService {
       headers,
     });
 
-    const artistUpdated = this.convertArtist(response.data);
+    const artist = this.convertArtist(response.data);
 
-    return artistUpdated;
+    return artist;
   };
 }
