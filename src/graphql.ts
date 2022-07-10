@@ -7,6 +7,28 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface ArtistInput {
+    firstName: string;
+    secondName: string;
+    middleName?: Nullable<string>;
+    birthDate?: Nullable<string>;
+    birthPlace?: Nullable<string>;
+    country: string;
+    bandsIds?: Nullable<Nullable<string>[]>;
+    instruments?: Nullable<Nullable<string>[]>;
+}
+
+export interface ArtistUpdateInput {
+    firstName?: Nullable<string>;
+    secondName?: Nullable<string>;
+    middleName?: Nullable<string>;
+    birthDate?: Nullable<string>;
+    birthPlace?: Nullable<string>;
+    country?: Nullable<string>;
+    bandsIds?: Nullable<Nullable<string>[]>;
+    instruments?: Nullable<Nullable<string>[]>;
+}
+
 export interface MemberInput {
     id: string;
     instrument?: Nullable<string>;
@@ -88,6 +110,19 @@ export interface Artist {
     instruments?: Nullable<Nullable<string>[]>;
 }
 
+export interface IMutation {
+    createArtist(input?: Nullable<ArtistInput>): Nullable<Artist> | Promise<Nullable<Artist>>;
+    deleteArtist(id: string): Nullable<string> | Promise<Nullable<string>>;
+    updateArtist(id: string, input?: Nullable<ArtistUpdateInput>): Nullable<Artist> | Promise<Nullable<Artist>>;
+    createBand(input?: Nullable<BandInput>): Nullable<Band> | Promise<Nullable<Band>>;
+    deleteBand(id: string): Nullable<string> | Promise<Nullable<string>>;
+    updateBand(id: string, input?: Nullable<BandUpdateInput>): Nullable<Band> | Promise<Nullable<Band>>;
+    createGenre(input?: Nullable<GenreInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
+    updateGenre(id: string, input?: Nullable<GenreUpdateInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
+    register(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
+}
+
 export interface Band {
     id: string;
     name?: Nullable<string>;
@@ -104,16 +139,6 @@ export interface Member {
     middleName?: Nullable<string>;
     instrument?: Nullable<string>;
     years?: Nullable<Nullable<number>[]>;
-}
-
-export interface IMutation {
-    createBand(input?: Nullable<BandInput>): Nullable<Band> | Promise<Nullable<Band>>;
-    deleteBand(id: string): Nullable<string> | Promise<Nullable<string>>;
-    updateBand(id: string, input?: Nullable<BandUpdateInput>): Nullable<Band> | Promise<Nullable<Band>>;
-    createGenre(input?: Nullable<GenreInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
-    deleteGenre(id: string): Nullable<string> | Promise<Nullable<string>>;
-    updateGenre(id: string, input?: Nullable<GenreUpdateInput>): Nullable<Genre> | Promise<Nullable<Genre>>;
-    register(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export interface Favourites {

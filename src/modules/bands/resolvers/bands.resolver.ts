@@ -19,6 +19,17 @@ export default class BandsResolver {
     this.artistsService = new ArtistsService();
   }
 
+  private checkInput = async (input: BandInput | BandUpdateInput): Promise<void> => {
+    const { members, genresIds } = input;
+    if (members?.length) {
+      const artistsIds: string[] = members.map((member) => member?.id as string);
+      await this.artistsService.checkArtistsExistance(artistsIds);
+    }
+    if (genresIds?.length) {
+      await this.genresService.checkAllGenresExistance(genresIds as string[]);
+    }
+  };
+
   @Query()
   async band(@Args('id') id: string): Promise<Band | null> {
     const band = await this.bandsService.findOneById(id);
@@ -68,19 +79,29 @@ export default class BandsResolver {
 
   @Mutation()
   async createBand(@Context() context: IContext, @Args('input') input: BandInput): Promise<Band | Error> {
-    const { jwt } = context.req.headers;
-    const genre = await this.bandsService.createBand(jwt as string, input);
+    try {
+      await this.checkInput(input);
 
-    return genre;
+      const { jwt } = context.req.headers;
+      const band = await this.bandsService.createBand(jwt as string, input);
+
+      return band;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   }
 
   @Mutation()
   async deleteBand(@Context() context: IContext, @Args('id') id: string): Promise<string | Error> {
-    const { jwt } = context.req.headers;
+    try {
+      const { jwt } = context.req.headers;
 
-    const message = await this.bandsService.deleteBand(jwt as string, id);
+      const message = await this.bandsService.deleteBand(jwt as string, id);
 
-    return message;
+      return message;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   }
 
   @Mutation()
@@ -89,9 +110,15 @@ export default class BandsResolver {
     @Args('id') id: string,
     @Args('input') input: BandUpdateInput
   ): Promise<Band | Error> {
-    const { jwt } = context.req.headers;
-    const band = await this.bandsService.updateBand(jwt as string, id, input);
+    try {
+      await this.checkInput(input);
 
-    return band;
+      const { jwt } = context.req.headers;
+      const band = await this.bandsService.updateBand(jwt as string, id, input);
+
+      return band;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   }
 }

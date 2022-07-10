@@ -27,19 +27,27 @@ export default class GenresResolver {
 
   @Mutation()
   async createGenre(@Context() context: IContext, @Args('input') input: GenreInput): Promise<Genre | Error> {
-    const { jwt } = context.req.headers;
-    const genre = await this.genresService.createGenre(jwt as string, input);
+    try {
+      const { jwt } = context.req.headers;
+      const genre = await this.genresService.createGenre(jwt as string, input);
 
-    return genre;
+      return genre;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   }
 
   @Mutation()
   async deleteGenre(@Context() context: IContext, @Args('id') id: string): Promise<string | Error> {
-    const { jwt } = context.req.headers;
+    try {
+      const { jwt } = context.req.headers;
 
-    const message = await this.genresService.deleteGenre(jwt as string, id);
+      const message = await this.genresService.deleteGenre(jwt as string, id);
 
-    return message;
+      return message;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   }
 
   @Mutation()
@@ -48,9 +56,13 @@ export default class GenresResolver {
     @Args('id') id: string,
     @Args('input') input: GenreUpdateInput
   ): Promise<Genre | Error> {
-    const { jwt } = context.req.headers;
-    const genre = await this.genresService.updateGenre(jwt as string, id, input);
+    try {
+      const { jwt } = context.req.headers;
+      const genre = await this.genresService.updateGenre(jwt as string, id, input);
 
-    return genre;
+      return genre;
+    } catch (error) {
+      return new Error((error as Error).message);
+    }
   }
 }

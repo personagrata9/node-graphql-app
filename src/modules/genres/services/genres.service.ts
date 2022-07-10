@@ -62,58 +62,46 @@ export default class GenresService {
   };
 
   createGenre = async (jwt: string, input: GenreInput): Promise<Genre | Error> => {
-    try {
-      const headersRequest: AxiosRequestHeaders = {
-        Authorization: `Bearer ${jwt}`,
-      };
-      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.post(this.baseUrl, input, {
-        headers: headersRequest,
-      });
+    const headers: AxiosRequestHeaders = {
+      Authorization: `Bearer ${jwt}`,
+    };
+    const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.post(this.baseUrl, input, {
+      headers,
+    });
 
-      const genre = this.convertGenre(response.data);
+    const genre = this.convertGenre(response.data);
 
-      return genre;
-    } catch (error) {
-      return new Error((error as Error).message);
-    }
+    return genre;
   };
 
-  deleteGenre = async (jwt: string, id: string): Promise<string | Error> => {
-    try {
-      const url = `${this.baseUrl}/${id}`;
-      const headersRequest: AxiosRequestHeaders = {
-        Authorization: `Bearer ${jwt}`,
-      };
+  deleteGenre = async (jwt: string, id: string): Promise<string> => {
+    const url = `${this.baseUrl}/${id}`;
+    const headers: AxiosRequestHeaders = {
+      Authorization: `Bearer ${jwt}`,
+    };
 
-      await this.checkOneGenreExistance(id);
+    await this.checkOneGenreExistance(id);
 
-      await this.httpService.axiosRef.delete(url, {
-        headers: headersRequest,
-      });
+    await this.httpService.axiosRef.delete(url, {
+      headers,
+    });
 
-      return `Genre with id ${id} was successfuly deleted`;
-    } catch (error) {
-      return new Error((error as Error).message);
-    }
+    return `Genre with id ${id} was successfuly deleted`;
   };
 
-  updateGenre = async (jwt: string, id: string, input: GenreUpdateInput): Promise<Genre | Error> => {
-    try {
-      await this.checkOneGenreExistance(id);
+  updateGenre = async (jwt: string, id: string, input: GenreUpdateInput): Promise<Genre> => {
+    await this.checkOneGenreExistance(id);
 
-      const url = `${this.baseUrl}/${id}`;
-      const headersRequest: AxiosRequestHeaders = {
-        Authorization: `Bearer ${jwt}`,
-      };
-      const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.put(url, input, {
-        headers: headersRequest,
-      });
+    const url = `${this.baseUrl}/${id}`;
+    const headers: AxiosRequestHeaders = {
+      Authorization: `Bearer ${jwt}`,
+    };
+    const response: AxiosResponse<IGenre> = await this.httpService.axiosRef.put(url, input, {
+      headers,
+    });
 
-      const genreUpdated = this.convertGenre(response.data);
+    const genreUpdated = this.convertGenre(response.data);
 
-      return genreUpdated;
-    } catch (error) {
-      return new Error((error as Error).message);
-    }
+    return genreUpdated;
   };
 }
